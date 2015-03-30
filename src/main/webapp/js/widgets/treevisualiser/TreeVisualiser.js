@@ -50,7 +50,7 @@ define(function(require) {
 				Widget.View.prototype.initialize.call(this,options);
 				
 				this.datasets = [];
-				
+				this.visible = options.visible;
 				this.render();
 				this.setSize(options.width,options.height);
 	
@@ -90,6 +90,9 @@ define(function(require) {
 				else if (data._metaType == "VisualObjectReferenceNode") {
 					labelValue = data.getAspectInstancePath() + " -> " + data.getVisualObjectID();
 				}
+				else if (data._metaType == "VariableNode") {
+					//we get the first value from the time series, could be more in time series array
+					labelValue = data.getTimeSeries()[0].getValue() + " " + ((data.getTimeSeries()[0].getUnit()!=null && data.getTimeSeries()[0].getUnit()!="null")?(" " + data.getTimeSeries()[0].getUnit()):"");				}
 				else{
 					labelValue = data.getValue() + " " + ((data.getUnit()!=null && data.getUnit()!="null")?(" " + data.getUnit()):"");
 				}

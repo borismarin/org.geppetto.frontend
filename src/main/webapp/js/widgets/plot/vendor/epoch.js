@@ -926,7 +926,9 @@
         console.log(root);
       }
       QueryCSS.getContainer().node().appendChild(root);
-      ref = d3.select('#' + REFERENCE_CONTAINER_ID + ' ' + selector);
+      var formatSelector = selector.replace("[","\\[");
+      formatSelector = formatSelector.replace("]","\\]");
+      ref = d3.select('#' + REFERENCE_CONTAINER_ID + ' ' + formatSelector);
       styles = {};
       ref2 = QueryCSS.styleList;
       for (k = 0, len2 = ref2.length; k < len2; k++) {

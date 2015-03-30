@@ -49,6 +49,31 @@ define(function(require) {
 
 		initialize: function() {
 			this.widgets = new Array();
+		},
+
+		/**
+		 * Adds a new TreeVisualizerDAT Widget to Geppetto
+		 */
+		addTreeVisualiserDATWidget : function() {
+			//look for a name and id for the new widget
+			var id = this.getAvailableWidgetId("TreeVisualiserDAT", this.widgets);
+			var name = id;
+
+			// create tree visualiser widget
+			var tvdat = window[name] = new TreeVisualiserDAT({id : id, name : name,	visible : true, width: 260, height: 350});
+			// create help command for plot
+			tvdat.help = function() {
+				return GEPPETTO.Utility.getObjectCommands(id);
+			};
+			// store in local stack
+			this.widgets.push(tvdat);
+
+			GEPPETTO.WidgetsListener.subscribe(this, id);
+
+			// updates helpc command output
+			GEPPETTO.Console.updateHelpCommand("assets/js/widgets/treevisualiser/treevisualiserdat/TreeVisualiserDAT.js",	tvdat, id);
+			//update tags for autocompletion
+			GEPPETTO.Console.updateTags(tvdat.getId(), tvdat);
 			
 			// Register Commands
 			GEPPETTO.MenuManager.registerNewCommandProvider(["AspectNode",
@@ -64,32 +89,9 @@ define(function(require) {
 			                                                 "VariableNode",
 			                                                 "VisualGroupElementNode",
 			                                                 "VisualGroupNode",
-			                                                 "VisualObjectReferenceNode"],this.getCommands);
-		},
-
-		/**
-		 * Adds a new TreeVisualizerDAT Widget to Geppetto
-		 */
-		addTreeVisualiserDATWidget : function() {
-			//look for a name and id for the new widget
-			var id = this.getAvailableWidgetId("TreeVisualiserDAT", this.widgets);
-			var name = id;
-
-			// create tree visualiser widget
-			var tvdat = window[name] = new TreeVisualiserDAT({id : id, name : name,	visible : false, width: 260, height: 350});
-			// create help command for plot
-			tvdat.help = function() {
-				return GEPPETTO.Utility.getObjectCommands(id);
-			};
-			// store in local stack
-			this.widgets.push(tvdat);
-
-			GEPPETTO.WidgetsListener.subscribe(this, id);
-
-			// updates helpc command output
-			GEPPETTO.Console.updateHelpCommand("assets/js/widgets/treevisualiser/treevisualiserdat/TreeVisualiserDAT.js",	tvdat, id);
-			//update tags for autocompletion
-			GEPPETTO.Console.updateTags(tvdat.getId(), tvdat);
+			                                                 "VisualObjectReferenceNode"],
+			                                                 this.getCommands);
+			
 			return tvdat;
 		},
 
@@ -104,7 +106,7 @@ define(function(require) {
 			if (event == GEPPETTO.WidgetsListener.WIDGET_EVENT_TYPE.DELETE) {
 				this.removeWidgets();
 			}
-			else if(event == GEPPETTO.WidgetsListener.WIDGET_EVENT_TYPE.SELECTION_CHANGED) {
+			else if(event == Events.Select) {
 				//loop through all existing widgets
 				for(var i = 0; i < this.widgets.length; i++) {
 					var treeVisualiser = this.widgets[i];
@@ -142,7 +144,7 @@ define(function(require) {
 			}];
 
 
-			var availableWidgets = this.getWidgets();
+			var availableWidgets = GEPPETTO.WidgetFactory.getController(GEPPETTO.Widgets.TREEVISUALISERDAT).getWidgets();
 			if (availableWidgets.length > 0){
 				var group1Add =  {
 						label : "Add to DAT Widget",

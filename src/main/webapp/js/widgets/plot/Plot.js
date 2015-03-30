@@ -42,13 +42,13 @@ define(function(require) {
 
 	return Widget.View.extend({
 			plot: null,
-			limit: 1600,
+			datasets: [],
+			limit: 20,
 			options: null,
 			xaxisLabel: null,
 			yaxisLabel: null,
 			labelsUpdated: false,
 			labelsMap : {},
-			datasets : [],
 
 			/**
 			 * Default options for plot widget, used if none specified when plot
@@ -58,9 +58,13 @@ define(function(require) {
 				axes: ['right', 'bottom'],
 				tickFormats: { time: function(d) {return ".5";} },
 				ticks: { time: 10, right: 3},
-				historySize : 10,
+				historySize : 100,
+				windowSize : 1600,
+				margins : {right : 30},
+				queueSize: 1,
+				fps : 60
+				
 			},
-
 			/**
 			 * Initializes the plot given a set of options
 			 * 
@@ -79,7 +83,7 @@ define(function(require) {
 				$.widget.bridge('uitooltip', $.ui.tooltip);
 				
 				//show tooltip for legends
-				$(".legendLabel").tooltip();
+				$(".legendLabel").tooltip();			
 			},
 
 			/**
@@ -94,10 +98,10 @@ define(function(require) {
 			 */
 			plotData: function(state, options) {
 				if (state!= null) {					
-					var value = state.getValue();
+					var value = state.getTimeSeries()[0].getValue();
 					var id = state.getInstancePath();
 
-					var t = GEPPETTO.Simulation.getTime().getValue();
+					var t = GEPPETTO.Simulation.getTime().getTimeSeries()[0].getValue();
 					var nextSet ={
 							label : id,
 							variable : state,
@@ -114,7 +118,7 @@ define(function(require) {
 							ticks : this.options.ticks,
 							tickFormats : {bottom:function(d) {
 							    return Math.round(d*10000)/10000 + 
-							    		GEPPETTO.Simulation.getTime().unit;
+							    		GEPPETTO.Simulation.getTime().getTimeSeries()[0].getUnit();
 							  }, right :function(d) {
 								    return Math.round(d*10000)/10000;
 							  }},
@@ -209,9 +213,9 @@ define(function(require) {
 			updateDataSet: function() {
 				var newData = [];
 				for(var key in this.datasets) {
-					var newValue = this.datasets[key].variable.getValue();
+					var newValue = this.datasets[key].variable.getTimeSeries()[0].getValue();
 
-					var t = GEPPETTO.Simulation.getTime().getValue();
+					var t = GEPPETTO.Simulation.getTime().getTimeSeries()[0].getValue();
 
 					newData.push({ time : t, y: newValue});
 				}
@@ -300,7 +304,7 @@ define(function(require) {
 //						this.limit = this.options.xaxis.max;
 //					}
 //				}
-//				this.plot = $.plot($("#" + this.id), datasets, this.options);
+//				this.plot = $.plot($("#" + this.id), this.datasets, this.options);
 			},
 			
 			/**

@@ -75,7 +75,7 @@ define(function(require) {
 
 			OPACITY : {
 					DEFAULT : 1,
-					GHOST : .25,
+					GHOST : .18,
 			},
 			SIMULATION_LOADED: "Simulation Loaded",
 			SIMULATION_STARTED: "Simulation Started",
@@ -220,6 +220,8 @@ define(function(require) {
 			RETRIEVING_SIMULATION_TREE : 'Simulation tree: ',
 			
 			RETRIEVING_VISUALIZATION_TREE : 'Visualization tree: ',
+			
+			WRITING_MODEL : 'Writing model as ',	
 			
 			/**
 			 * GEPPETTO.Main resources
