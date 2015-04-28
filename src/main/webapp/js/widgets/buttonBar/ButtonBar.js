@@ -195,6 +195,7 @@ define(function(require) {
 							barDef = data;
 						},
 						error : function() {
+							console.warn('Error loading bar from URL ' + url +  '. Falling back to default.')
 							barDef = that.sample;
 						},
 						complete : function(jqXHR, status) {
